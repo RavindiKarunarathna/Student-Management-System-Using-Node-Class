@@ -287,6 +287,195 @@ class Node{
 	}
 }
 
+class AddStudent extends JFrame{
+	private JLabel mainTitleLbl, nicLbl, nameLbl, lecModeLbl, prfMarkLbl, dbmsMarkLbl;
+	private JTextField nicTxt, nameTxt, lecModeTxt, prfMarkTxt, dbmsMarkTxt;
+	private JButton addStudentBtn, cancelBtn;
+	private JPanel txtNamePanel, northColorPanel, btnPanel;
+	private Node list;
+	
+	AddStudent(Node listLocal){
+		this.list=listLocal;
+		setSize(900,600);
+		setTitle("Add Student");
+		setLocationRelativeTo(null);
+		
+		northColorPanel=new JPanel(new BorderLayout());
+		northColorPanel.setBackground(new Color(51, 153, 255));
+		
+		mainTitleLbl=new JLabel("Add Student");
+		mainTitleLbl.setHorizontalAlignment(JLabel.CENTER);
+		mainTitleLbl.setFont(new Font("", Font.BOLD, 50));
+		northColorPanel.add(mainTitleLbl,BorderLayout.CENTER);
+		add("North", northColorPanel);
+		
+		txtNamePanel=new JPanel(new GridLayout(5,2));
+		
+		nicLbl=new JLabel("NIC : ");
+		nameLbl=new JLabel("Name : ");
+		lecModeLbl=new JLabel("Lec Mode(online-0 physical-1) : ");
+		prfMarkLbl=new JLabel("PRF Mark : ");
+		dbmsMarkLbl=new JLabel("DBMS Mark : ");
+		
+		nicTxt=new JTextField();
+		nameTxt=new JTextField();
+		lecModeTxt=new JTextField();
+		prfMarkTxt=new JTextField();
+		dbmsMarkTxt=new JTextField();
+		
+		nicTxt.setFont(new Font("",1,20));
+		nameTxt.setFont(new Font("",1,20));
+		lecModeTxt.setFont(new Font("",1,20));
+		prfMarkTxt.setFont(new Font("",1,20));
+		dbmsMarkTxt.setFont(new Font("",1,20));
+		
+		nicLbl.setFont(new Font("",1,20));
+		nameLbl.setFont(new Font("",1,20));
+		lecModeLbl.setFont(new Font("",1,20));
+		prfMarkLbl.setFont(new Font("",1,20));
+		dbmsMarkLbl.setFont(new Font("",1,20));
+		
+		txtNamePanel.add(nicLbl);
+		txtNamePanel.add(nicTxt);
+		txtNamePanel.add(nameLbl);
+		txtNamePanel.add(nameTxt);
+		txtNamePanel.add(lecModeLbl);
+		txtNamePanel.add(lecModeTxt);
+		txtNamePanel.add(prfMarkLbl);
+		txtNamePanel.add(prfMarkTxt);
+		txtNamePanel.add(dbmsMarkLbl);
+		txtNamePanel.add(dbmsMarkTxt);
+		
+		addStudentBtn=new JButton("Add Student");
+		cancelBtn=new JButton("Cancel");
+		btnPanel=new JPanel(new FlowLayout(FlowLayout.RIGHT));
+		btnPanel.add(cancelBtn);
+		btnPanel.add(addStudentBtn);
+		add("South",btnPanel);
+		
+		addStudentBtn.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				String nic=nicTxt.getText();
+				String name=nameTxt.getText();
+				int lecMode=Integer.parseInt(lecModeTxt.getText());
+				int prfMark=Integer.parseInt(prfMarkTxt.getText());
+				int dbmsMark=Integer.parseInt(dbmsMarkTxt.getText());
+				
+				if(list.checkNIC(nic)){
+					JOptionPane.showMessageDialog(null,"NIC All Ready Exsits...");
+					return;
+				}
+				if(nic.length()!=12){
+					JOptionPane.showMessageDialog(null,"NIC Not Valid...");
+					return;
+				}
+				if(prfMark<0 || prfMark>100){
+					JOptionPane.showMessageDialog(null,"PRF Mark Not Valid...");
+					return;
+				}
+				if(dbmsMark<0 || dbmsMark>100){
+					JOptionPane.showMessageDialog(null,"DBMS Mark Not Valid");
+					return;
+				}
+				if(lecMode<0 || lecMode>1){
+					JOptionPane.showMessageDialog(null,"Lecture Mode Not Valid");
+					return;
+				}
+				String id="";
+				if(lecMode==1){
+					id=id+"PR"+list.generateId();
+				}else if(lecMode==0){
+					id=id+"OR"+list.generateId();
+				}
+				list.add(list.new Student(id,name,nic,prfMark,dbmsMark));
+				
+				try{
+					FileWriter fw=new FileWriter("Student.txt",true);
+					fw.write(id+", "+name+", "+nic+", "+prfMark+", "+dbmsMark+"\n");
+					fw.close();
+				}catch(IOException ex){
+					
+				}
+				JOptionPane.showMessageDialog(null,"Successfully ID is "+id);
+				nicTxt.setText("");
+				nameTxt.setText("");
+				lecModeTxt.setText("");
+				prfMarkTxt.setText("");
+				dbmsMarkTxt.setText("");
+			}
+		});
+		
+		cancelBtn.addActionListener(new ActionListener(){
+			public void  actionPerformed(ActionEvent e){
+				dispose();
+				StudentManagement s1=new StudentManagement(list);
+				s1.setVisible(true);
+			}
+		});
+	}
+}
+
+class StudentManagementFirstPage extends JFrame{
+	private JLabel mainTitleLbl;
+	private JLabel westLbl;
+	private JButton studentMngBtn;
+	private JButton batchMngBtn;
+	private JButton gradeMngBtn;
+	private JButton reportMngBtn;
+	private JPanel listFirstPage;
+	private JButton[] jBtnArray;
+	private Node list;
+	
+	StudentManagementFirstPage(Node listLocal){
+		this.list=listLocal;
+		setSize(900,600);
+		setTitle("Student Management System");
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		setLocationRelativeTo(null);
+		
+		mainTitleLbl=new JLabel("iCET Student Management System");
+		mainTitleLbl.setFont(new Font("",1,30));
+		mainTitleLbl.setHorizontalAlignment(JLabel.CENTER);
+		add("North", mainTitleLbl);
+		
+		jBtnArray=new JButton[3];
+		String[] ar={"Student Management", "Student Report", "Exit"};
+		listFirstPage=new JPanel(new GridLayout(3,1,4,4));
+		for(int i=0;i<3;i++){
+			jBtnArray[i]=new JButton(ar[i]);
+			jBtnArray[i].setFont(new Font("",1,30));
+			jBtnArray[i].setForeground(Color.BLACK);
+			listFirstPage.add(jBtnArray[i]);
+		}
+		
+		jBtnArray[0].addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				dispose();
+				StudentManagement s1=new StudentManagement(list);
+				s1.setVisible(true);
+			}
+		});
+		
+		jBtnArray[1].addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				dispose();
+				StudentReport b1=new StudentReport(list);
+				b1.setVisible(true);
+			}
+		});
+		
+		jBtnArray[0].addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				dispose();
+			}
+		});
+		
+		add("Center", listFirstPage);
+	}	
+}
+
+
+
 class Demo{
 	public static void main(String[] args){
 		
