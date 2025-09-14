@@ -287,134 +287,6 @@ class Node{
 	}
 }
 
-class AddStudent extends JFrame{
-	private JLabel mainTitleLbl, nicLbl, nameLbl, lecModeLbl, prfMarkLbl, dbmsMarkLbl;
-	private JTextField nicTxt, nameTxt, lecModeTxt, prfMarkTxt, dbmsMarkTxt;
-	private JButton addStudentBtn, cancelBtn;
-	private JPanel txtNamePanel, northColorPanel, btnPanel;
-	private Node list;
-	
-	AddStudent(Node listLocal){
-		this.list=listLocal;
-		setSize(900,600);
-		setTitle("Add Student");
-		setLocationRelativeTo(null);
-		
-		northColorPanel=new JPanel(new BorderLayout());
-		northColorPanel.setBackground(new Color(51, 153, 255));
-		
-		mainTitleLbl=new JLabel("Add Student");
-		mainTitleLbl.setHorizontalAlignment(JLabel.CENTER);
-		mainTitleLbl.setFont(new Font("", Font.BOLD, 50));
-		northColorPanel.add(mainTitleLbl,BorderLayout.CENTER);
-		add("North", northColorPanel);
-		
-		txtNamePanel=new JPanel(new GridLayout(5,2));
-		
-		nicLbl=new JLabel("NIC : ");
-		nameLbl=new JLabel("Name : ");
-		lecModeLbl=new JLabel("Lec Mode(online-0 physical-1) : ");
-		prfMarkLbl=new JLabel("PRF Mark : ");
-		dbmsMarkLbl=new JLabel("DBMS Mark : ");
-		
-		nicTxt=new JTextField();
-		nameTxt=new JTextField();
-		lecModeTxt=new JTextField();
-		prfMarkTxt=new JTextField();
-		dbmsMarkTxt=new JTextField();
-		
-		nicTxt.setFont(new Font("",1,20));
-		nameTxt.setFont(new Font("",1,20));
-		lecModeTxt.setFont(new Font("",1,20));
-		prfMarkTxt.setFont(new Font("",1,20));
-		dbmsMarkTxt.setFont(new Font("",1,20));
-		
-		nicLbl.setFont(new Font("",1,20));
-		nameLbl.setFont(new Font("",1,20));
-		lecModeLbl.setFont(new Font("",1,20));
-		prfMarkLbl.setFont(new Font("",1,20));
-		dbmsMarkLbl.setFont(new Font("",1,20));
-		
-		txtNamePanel.add(nicLbl);
-		txtNamePanel.add(nicTxt);
-		txtNamePanel.add(nameLbl);
-		txtNamePanel.add(nameTxt);
-		txtNamePanel.add(lecModeLbl);
-		txtNamePanel.add(lecModeTxt);
-		txtNamePanel.add(prfMarkLbl);
-		txtNamePanel.add(prfMarkTxt);
-		txtNamePanel.add(dbmsMarkLbl);
-		txtNamePanel.add(dbmsMarkTxt);
-		
-		addStudentBtn=new JButton("Add Student");
-		cancelBtn=new JButton("Cancel");
-		btnPanel=new JPanel(new FlowLayout(FlowLayout.RIGHT));
-		btnPanel.add(cancelBtn);
-		btnPanel.add(addStudentBtn);
-		add("South",btnPanel);
-		
-		addStudentBtn.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e){
-				String nic=nicTxt.getText();
-				String name=nameTxt.getText();
-				int lecMode=Integer.parseInt(lecModeTxt.getText());
-				int prfMark=Integer.parseInt(prfMarkTxt.getText());
-				int dbmsMark=Integer.parseInt(dbmsMarkTxt.getText());
-				
-				if(list.checkNIC(nic)){
-					JOptionPane.showMessageDialog(null,"NIC All Ready Exsits...");
-					return;
-				}
-				if(nic.length()!=12){
-					JOptionPane.showMessageDialog(null,"NIC Not Valid...");
-					return;
-				}
-				if(prfMark<0 || prfMark>100){
-					JOptionPane.showMessageDialog(null,"PRF Mark Not Valid...");
-					return;
-				}
-				if(dbmsMark<0 || dbmsMark>100){
-					JOptionPane.showMessageDialog(null,"DBMS Mark Not Valid");
-					return;
-				}
-				if(lecMode<0 || lecMode>1){
-					JOptionPane.showMessageDialog(null,"Lecture Mode Not Valid");
-					return;
-				}
-				String id="";
-				if(lecMode==1){
-					id=id+"PR"+list.generateId();
-				}else if(lecMode==0){
-					id=id+"OR"+list.generateId();
-				}
-				list.add(list.new Student(id,name,nic,prfMark,dbmsMark));
-				
-				try{
-					FileWriter fw=new FileWriter("Student.txt",true);
-					fw.write(id+", "+name+", "+nic+", "+prfMark+", "+dbmsMark+"\n");
-					fw.close();
-				}catch(IOException ex){
-					
-				}
-				JOptionPane.showMessageDialog(null,"Successfully ID is "+id);
-				nicTxt.setText("");
-				nameTxt.setText("");
-				lecModeTxt.setText("");
-				prfMarkTxt.setText("");
-				dbmsMarkTxt.setText("");
-			}
-		});
-		
-		cancelBtn.addActionListener(new ActionListener(){
-			public void  actionPerformed(ActionEvent e){
-				dispose();
-				StudentManagement s1=new StudentManagement(list);
-				s1.setVisible(true);
-			}
-		});
-	}
-}
-
 class StudentManagementFirstPage extends JFrame{
 	private JLabel mainTitleLbl;
 	private JLabel westLbl;
@@ -464,7 +336,7 @@ class StudentManagementFirstPage extends JFrame{
 			}
 		});
 		
-		jBtnArray[0].addActionListener(new ActionListener(){
+		jBtnArray[2].addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				dispose();
 			}
@@ -474,10 +346,693 @@ class StudentManagementFirstPage extends JFrame{
 	}	
 }
 
+class StudentManagement extends JFrame{
+	private JLabel mainTitleLbl;
+	private JButton addStudentBtn;
+	private JButton updateStudentBtn;
+	private JButton viewStudentBtn;
+	private JButton deleteStudentBtn;
+	private JButton backBtn;
+	private JPanel mainBtnPanel;
+	private JButton[] jBtnArray;
+	private Node list;
+	
+	StudentManagement(Node listLocal){
+		this.list=listLocal;
+		setSize(900,600);
+		setTitle("Student Management");
+		setLocationRelativeTo(null);
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		mainTitleLbl=new JLabel("Student Management");
+		mainTitleLbl.setHorizontalAlignment(JLabel.CENTER);
+		mainTitleLbl.setFont(new Font("",1,25));
+		add("North",mainTitleLbl);
+		
+		jBtnArray=new JButton[5];
+		String ar[]={"Add Student","Update Student","View Student","Delete Student","Back"};
+		mainBtnPanel=new JPanel(new GridLayout(5,1,4,4));
+		
+		for(int i=0;i<ar.length;i++){
+			jBtnArray[i]=new JButton();
+			jBtnArray[i].setText(ar[i]);
+			jBtnArray[i].setFont(new Font("",1,20));
+			mainBtnPanel.add(jBtnArray[i]);
+			add("Center",mainBtnPanel);
+		}
+		
+		jBtnArray[4].addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent evt){
+				dispose();
+				StudentManagementFirstPage s1=new StudentManagementFirstPage(list);
+				s1.setVisible(true);
+			}
+		});
+		jBtnArray[0].addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent evt){
+				dispose();
+				AddStudent c1=new AddStudent(list);
+				c1.setVisible(true);
+			}
+		});
+		jBtnArray[1].addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent evt){
+				dispose();
+				UpdateStudent u1=new UpdateStudent(list);
+				u1.setVisible(true);
+			}
+		});
+		jBtnArray[2].addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent evt){
+				dispose();
+				ViewStudent u1=new ViewStudent(list);
+				u1.setVisible(true);
+			}
+		});
+		jBtnArray[3].addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent evt){
+				dispose();
+				DeleteStudent u1=new DeleteStudent(list);
+				u1.setVisible(true);
+			}
+		});
+	}
+}
 
+class AddStudent extends JFrame {
+    private JLabel mainTitleLbl, nicLbl, nameLbl, lecModeLbl, prfMarkLbl, dbmsMarkLbl;
+    private JTextField nicTxt, nameTxt, lecModeTxt, prfMarkTxt, dbmsMarkTxt;
+    private JButton addStudentBtn, cancelBtn;
+    private JPanel txtNamePanel, northColorPanel, btnPanel;
+    private Node list;
+
+    public AddStudent(Node listLocal) {
+        this.list = listLocal;
+        setSize(900, 600);
+        setTitle("Add Student");
+        setLocationRelativeTo(null);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setLayout(new BorderLayout());
+
+        northColorPanel = new JPanel(new BorderLayout());
+        northColorPanel.setBackground(new Color(51, 153, 255));
+
+        mainTitleLbl = new JLabel("Add Student");
+        mainTitleLbl.setHorizontalAlignment(JLabel.CENTER);
+        mainTitleLbl.setFont(new Font("SansSerif", Font.BOLD, 50));
+        northColorPanel.add(mainTitleLbl, BorderLayout.CENTER);
+        add(northColorPanel, BorderLayout.NORTH);
+
+        txtNamePanel = new JPanel(new GridLayout(5, 2, 10, 10));
+        txtNamePanel.setBorder(BorderFactory.createEmptyBorder(20, 50, 20, 50));
+
+        nicLbl = new JLabel("NIC:");
+        nameLbl = new JLabel("Name:");
+        lecModeLbl = new JLabel("Lecture Mode (0: Online, 1: Physical):");
+        prfMarkLbl = new JLabel("PRF Mark:");
+        dbmsMarkLbl = new JLabel("DBMS Mark:");
+
+        nicTxt = new JTextField();
+        nameTxt = new JTextField();
+        lecModeTxt = new JTextField();
+        prfMarkTxt = new JTextField();
+        dbmsMarkTxt = new JTextField();
+
+        Font labelFont = new Font("SansSerif", Font.BOLD, 20);
+        Font textFont = new Font("SansSerif", Font.PLAIN, 20);
+
+        nicLbl.setFont(labelFont);
+        nameLbl.setFont(labelFont);
+        lecModeLbl.setFont(labelFont);
+        prfMarkLbl.setFont(labelFont);
+        dbmsMarkLbl.setFont(labelFont);
+
+        nicTxt.setFont(textFont);
+        nameTxt.setFont(textFont);
+        lecModeTxt.setFont(textFont);
+        prfMarkTxt.setFont(textFont);
+        dbmsMarkTxt.setFont(textFont);
+
+        txtNamePanel.add(nicLbl);
+        txtNamePanel.add(nicTxt);
+        txtNamePanel.add(nameLbl);
+        txtNamePanel.add(nameTxt);
+        txtNamePanel.add(lecModeLbl);
+        txtNamePanel.add(lecModeTxt);
+        txtNamePanel.add(prfMarkLbl);
+        txtNamePanel.add(prfMarkTxt);
+        txtNamePanel.add(dbmsMarkLbl);
+        txtNamePanel.add(dbmsMarkTxt);
+
+        add(txtNamePanel, BorderLayout.CENTER);
+
+        addStudentBtn = new JButton("Add Student");
+        cancelBtn = new JButton("Cancel");
+        addStudentBtn.setFont(labelFont);
+        cancelBtn.setFont(labelFont);
+
+        btnPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 20, 10));
+        btnPanel.add(cancelBtn);
+        btnPanel.add(addStudentBtn);
+        add(btnPanel, BorderLayout.SOUTH);
+
+        addStudentBtn.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String nic = nicTxt.getText().trim();
+                String name = nameTxt.getText().trim();
+                String lecModeStr = lecModeTxt.getText().trim();
+                String prfStr = prfMarkTxt.getText().trim();
+                String dbmsStr = dbmsMarkTxt.getText().trim();
+
+                if (nic.isEmpty() || name.isEmpty() || lecModeStr.isEmpty() ||
+                        prfStr.isEmpty() || dbmsStr.isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "All fields must be filled.");
+                    return;
+                }
+
+                try {
+                    int lecMode = Integer.parseInt(lecModeStr);
+                    int prfMark = Integer.parseInt(prfStr);
+                    int dbmsMark = Integer.parseInt(dbmsStr);
+
+                    if (list.checkNIC(nic)) {
+                        JOptionPane.showMessageDialog(null, "NIC already exists.");
+                        return;
+                    }
+
+                    if (nic.length() != 12) {
+                        JOptionPane.showMessageDialog(null, "NIC must be exactly 12 characters.");
+                        return;
+                    }
+
+                    if (prfMark < 0 || prfMark > 100) {
+                        JOptionPane.showMessageDialog(null, "PRF mark must be between 0 and 100.");
+                        return;
+                    }
+
+                    if (dbmsMark < 0 || dbmsMark > 100) {
+                        JOptionPane.showMessageDialog(null, "DBMS mark must be between 0 and 100.");
+                        return;
+                    }
+
+                    if (lecMode < 0 || lecMode > 1) {
+                        JOptionPane.showMessageDialog(null, "Lecture mode must be 0 or 1.");
+                        return;
+                    }
+
+                    String prefix = (lecMode == 1) ? "PR" : "OR";
+                    String id = prefix + list.generateId();
+
+                    list.add(list.new Student(id, name, nic, prfMark, dbmsMark));
+
+                    try (FileWriter fw = new FileWriter("Student.txt", true)) {
+                        fw.write(id + "," + name + "," + nic + "," + prfMark + "," + dbmsMark + "\n");
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                        JOptionPane.showMessageDialog(null, "Error writing to file.");
+                        return;
+                    }
+
+                    JOptionPane.showMessageDialog(null, "Student added successfully! ID: " + id);
+
+                    nicTxt.setText("");
+                    nameTxt.setText("");
+                    lecModeTxt.setText("");
+                    prfMarkTxt.setText("");
+                    dbmsMarkTxt.setText("");
+
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(null, "Please enter valid numeric values.");
+                }
+            }
+        });
+
+        cancelBtn.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                dispose();
+                StudentManagement s1 = new StudentManagement(list);
+                s1.setVisible(true);
+            }
+        });
+    }
+}
+
+class ViewStudent extends JFrame{
+	private JLabel idLbl,nicLbl,nameLbl,prfMarkLbl,dbmsMarkLbl;
+	private JTextField idTxt,nicTxt,nameTxt,prfMarkTxt,dbmsMarkTxt;
+	private JButton searchBtn,resetBtn,cancelBtn;
+	private Node list;
+	
+	ViewStudent(Node listLocal){
+		this.list=listLocal;
+		setSize(900,600);
+		setTitle("View Student");
+		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		setLocationRelativeTo(null);
+		
+		JLabel titleLbl=new JLabel("View Student");
+		titleLbl.setFont(new Font("",3,20));
+		titleLbl.setHorizontalAlignment(JLabel.CENTER);
+		add("North",titleLbl);
+		
+		JPanel studentDetailPanel=new JPanel(new GridLayout(5,2,10,10));
+		
+		idLbl=new JLabel("Student ID : ");
+		idTxt=new JTextField();
+		idLbl.setFont(new Font("",1,20));
+		idTxt.setFont(new Font("",1,20));
+		
+		nicLbl=new JLabel("NIC : ");
+		nicTxt=new JTextField();
+		nicLbl.setFont(new Font("",1,20));
+		nicTxt.setFont(new Font("",1,20));
+		
+		nameLbl=new JLabel("Name : ");
+		nameTxt=new JTextField();
+		nameLbl.setFont(new Font("",1,20));
+		nameTxt.setFont(new Font("",1,20));
+		
+		prfMarkLbl=new JLabel("PRF Mark : ");
+		prfMarkTxt=new JTextField();
+		prfMarkLbl.setFont(new Font("",1,20));
+		prfMarkTxt.setFont(new Font("",1,20));
+		
+		dbmsMarkLbl=new JLabel("DBMS Mark : ");
+		dbmsMarkTxt=new JTextField();
+		dbmsMarkLbl.setFont(new Font("",1,20));
+		dbmsMarkTxt.setFont(new Font("",1,20));
+		
+		studentDetailPanel.add(idLbl);
+		studentDetailPanel.add(idTxt);
+		studentDetailPanel.add(nicLbl);
+		studentDetailPanel.add(nicTxt);
+		studentDetailPanel.add(nameLbl);
+		studentDetailPanel.add(nameTxt);
+		studentDetailPanel.add(prfMarkLbl);
+		studentDetailPanel.add(prfMarkTxt);
+		studentDetailPanel.add(dbmsMarkLbl);
+		studentDetailPanel.add(dbmsMarkTxt);
+		
+		add("Center",studentDetailPanel);
+		
+		JPanel buttonPanel=new JPanel(new FlowLayout(FlowLayout.RIGHT));
+		searchBtn=new JButton("Search");
+		resetBtn=new JButton("Reset");
+		cancelBtn=new JButton("Cancel");
+		
+		buttonPanel.add(cancelBtn);
+		buttonPanel.add(resetBtn);
+		buttonPanel.add(searchBtn);
+		add("South",buttonPanel);
+		
+		searchBtn.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				String id=idTxt.getText();
+				if(!list.search(id)){
+					JOptionPane.showMessageDialog(null,"ID is not exsits...");
+					return;
+				}
+				
+				Node.Student index=list.get(id);
+				String name=index.getName();
+				nameTxt.setText(name);
+				String nic=index.getNIC();
+				nicTxt.setText(nic);
+				int prfMark=index.getPRFMark();
+				prfMarkTxt.setText(Integer.toString(prfMark));
+				int dbmsMark=index.getDBMSMark();
+				dbmsMarkTxt.setText(Integer.toString(dbmsMark));				
+			}
+		});
+		
+		resetBtn.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				idTxt.setText("");
+				nicTxt.setText("");
+				nameTxt.setText("");
+				prfMarkTxt.setText("");
+				dbmsMarkTxt.setText("");
+			}
+		});
+		
+		cancelBtn.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                dispose();
+                StudentManagement s1 = new StudentManagement(list);
+                s1.setVisible(true);
+            }
+        });
+	}
+}
+
+class UpdateStudent extends JFrame{
+	private JLabel idLbl,nicLbl,nameLbl,prfMarkLbl,dbmsMarkLbl;
+	private JTextField idTxt,nicTxt,nameTxt,prfMarkTxt,dbmsMarkTxt;
+	private JButton updateStudentBtn,cancelBtn,searchBtn;
+	private Node list;
+	
+	UpdateStudent(Node listLocal){
+		this.list=listLocal;
+		setSize(900,600);
+		setTitle("Update Student");
+		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		setLocationRelativeTo(null);
+		
+		JLabel titleLbl=new JLabel ("Update Student");
+		titleLbl.setFont(new Font("",3,20));
+		titleLbl.setHorizontalAlignment(JLabel.CENTER);
+		add("North",titleLbl);
+		
+		JPanel bodyPanel=new JPanel(new GridLayout(5,2,10,10));
+		searchBtn=new JButton("Search");
+		idTxt=new JTextField();
+		searchBtn.setFont(new Font("",1,20));
+		idTxt.setFont(new Font("",1,20));
+		
+		nicLbl=new JLabel("NIC : ");
+		nicTxt=new JTextField();
+		nicLbl.setFont(new Font("",1,20));
+		nicTxt.setFont(new Font("",1,20));
+		
+		nameLbl=new JLabel("Name : ");
+		nameTxt=new JTextField();
+		nameLbl.setFont(new Font("",1,20));
+		nameTxt.setFont(new Font("",1,20));
+		
+		prfMarkLbl=new JLabel("PRF Mark : ");
+		prfMarkTxt=new JTextField();
+		prfMarkLbl.setFont(new Font("",1,20));
+		prfMarkTxt.setFont(new Font("",1,20));
+		
+		dbmsMarkLbl=new JLabel("DBMS Mark : ");
+		dbmsMarkTxt=new JTextField();
+		dbmsMarkLbl.setFont(new Font("",1,20));
+		dbmsMarkTxt.setFont(new Font("",1,20));
+		
+		bodyPanel.add(idTxt);
+		bodyPanel.add(searchBtn);
+		bodyPanel.add(nicLbl);
+		bodyPanel.add(nicTxt);
+		bodyPanel.add(nameLbl);
+		bodyPanel.add(nameTxt);
+		bodyPanel.add(prfMarkLbl);
+		bodyPanel.add(prfMarkTxt);
+		bodyPanel.add(dbmsMarkLbl);
+		bodyPanel.add(dbmsMarkTxt);
+		
+		add("Center",bodyPanel);
+		
+		JPanel buttonPanel=new JPanel(new FlowLayout(FlowLayout.RIGHT));
+		updateStudentBtn=new JButton("Update Student");
+		cancelBtn=new JButton("Cancel");
+		
+		buttonPanel.add(cancelBtn);
+		buttonPanel.add(updateStudentBtn);
+		
+		add("South",buttonPanel);
+		
+		searchBtn.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				String id=idTxt.getText();
+				if(!list.search(id)){
+					JOptionPane.showMessageDialog(null,"ID is not exsits...");
+					return;
+				}
+				
+				Node.Student index=list.get(id);
+				String name=index.getName();
+				nameTxt.setText(name);
+				String nic=index.getNIC();
+				nicTxt.setText(nic);
+				int prfMark=index.getPRFMark();
+				prfMarkTxt.setText(Integer.toString(prfMark));
+				int dbmsMark=index.getDBMSMark();
+				dbmsMarkTxt.setText(Integer.toString(dbmsMark));
+			}
+		});
+		
+		updateStudentBtn.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				String id=idTxt.getText();
+				String nic=nicTxt.getText();
+				String name=nameTxt.getText();
+				int prfMark=Integer.parseInt(prfMarkTxt.getText());
+				int dbmsMark=Integer.parseInt(dbmsMarkTxt.getText());
+				
+				Node.Student index=list.get(id);
+				index.setName(name);
+				index.setNIC(nic);
+				index.setPRFMark(prfMark);
+				index.setDBMSMark(dbmsMark);
+				
+				File studentFile=new File("Student.txt");
+				try{
+					FileWriter fw1=new FileWriter(studentFile);
+					fw1.close();
+					studentFile.delete();
+					FileWriter fw=new FileWriter(studentFile);
+					
+					for(int i=0;i<list.size();i++){
+						String id1=list.getIndex(i).getID();
+						String name1=list.getIndex(i).getName();
+						String nic1=list.getIndex(i).getNIC();
+						String prfMark1=Integer.toString(list.getIndex(i).getPRFMark());
+						String dbmsMark1=Integer.toString(list.getIndex(i).getDBMSMark());
+						fw.write(id1+","+name1+","+nic1+","+prfMark1+","+dbmsMark1+"/n");
+					}
+					fw.close();
+				}catch(IOException ex){
+					
+				}
+				
+				JOptionPane.showMessageDialog(null,"Update successfully...");
+				idTxt.setText("");
+				nicTxt.setText("");
+				nameTxt.setText("");
+				prfMarkTxt.setText("");
+				dbmsMarkTxt.setText("");
+			}
+		});
+		
+		cancelBtn.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                dispose();
+                StudentManagement s1 = new StudentManagement(list);
+                s1.setVisible(true);
+            }
+        });
+	}
+}
+
+class DeleteStudent extends JFrame{
+	private JLabel idLbl,nicLbl,nameLbl,prfMarkLbl,dbmsMarkLbl;
+	private JTextField idTxt,nicTxt,nameTxt,prfMarkTxt,dbmsMarkTxt;
+	private JButton deleteStudentBtn,cancelBtn,searchBtn;
+	private Node list;
+	
+	DeleteStudent(Node listLocal){
+		this.list=listLocal;
+		setSize(900,600);
+		setTitle("Delete Student");
+		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		setLocationRelativeTo(null);
+		
+		JLabel titleLbl=new JLabel("Delete Student");
+		titleLbl.setFont(new Font("",3,20));
+		titleLbl.setHorizontalAlignment(JLabel.CENTER);
+		add("North",titleLbl);
+		
+		JPanel bodyPanel=new JPanel(new GridLayout(5,2,10,10));
+		searchBtn=new JButton("Search");
+		idTxt=new JTextField();
+		searchBtn.setFont(new Font("",1,20));
+		idTxt.setFont(new Font("",1,20));
+		
+		nicLbl=new JLabel("NIC : ");
+		nicTxt=new JTextField();
+		nicLbl.setFont(new Font("",1,20));
+		nicTxt.setFont(new Font("",1,20));
+		
+		nameLbl=new JLabel("Name : ");
+		nameTxt=new JTextField();
+		nameLbl.setFont(new Font("",1,20));
+		nameTxt.setFont(new Font("",1,20));
+		
+		prfMarkLbl=new JLabel("PRF Mark : ");
+		prfMarkTxt=new JTextField();
+		prfMarkLbl.setFont(new Font("",1,20));
+		prfMarkTxt.setFont(new Font("",1,20));
+		
+		dbmsMarkLbl=new JLabel("DBMS Mark : ");
+		dbmsMarkTxt=new JTextField();
+		dbmsMarkLbl.setFont(new Font("",1,20));
+		dbmsMarkTxt.setFont(new Font("",1,20));
+		
+		bodyPanel.add(idTxt);
+		bodyPanel.add(searchBtn);
+		bodyPanel.add(nicLbl);
+		bodyPanel.add(nicTxt);
+		bodyPanel.add(nameLbl);
+		bodyPanel.add(nameTxt);
+		bodyPanel.add(prfMarkLbl);
+		bodyPanel.add(prfMarkTxt);
+		bodyPanel.add(dbmsMarkLbl);
+		bodyPanel.add(dbmsMarkTxt);
+		
+		add("Center",bodyPanel);
+		
+		JPanel buttonPanel=new JPanel(new FlowLayout(FlowLayout.RIGHT));
+		deleteStudentBtn=new JButton("Delete Student");
+		cancelBtn=new JButton("Cancel");
+		
+		buttonPanel.add(cancelBtn);
+		buttonPanel.add(deleteStudentBtn);
+		
+		add("South",buttonPanel);
+		
+		searchBtn.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				String id=idTxt.getText();
+				if(!list.search(id)){
+					JOptionPane.showMessageDialog(null,"ID is not exsits...");
+					return;
+				}
+				
+				Node.Student index=list.get(id);
+				String name=index.getName();
+				nameTxt.setText(name);
+				String nic=index.getNIC();
+				nicTxt.setText(nic);
+				int prfMark=index.getPRFMark();
+				prfMarkTxt.setText(Integer.toString(prfMark));
+				int dbmsMark=index.getDBMSMark();
+				dbmsMarkTxt.setText(Integer.toString(dbmsMark));
+			}
+		});
+		
+		deleteStudentBtn.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				String stuID=idTxt.getText();
+				int no=list.indexOf(stuID);
+				list.remove(no);
+				File studentFile=new File("Student.txt");
+				try{
+					FileWriter fw1=new FileWriter(studentFile);
+					fw1.close();
+					studentFile.delete();
+					FileWriter fw=new FileWriter(studentFile);
+					for(int i=0;i<list.size();i++){
+						String id=list.getIndex(i).getID();
+						String name=list.getIndex(i).getName();
+						String nic=list.getIndex(i).getNIC();
+						String prfMark=Integer.toString(list.getIndex(i).getPRFMark());
+						String dbmsMark=Integer.toString(list.getIndex(i).getDBMSMark());
+						
+						fw.write(id+","+name+","+nic+","+prfMark+","+dbmsMark+"\n");
+					}
+					fw.close();
+				}catch(IOException ex){
+					
+				}
+				JOptionPane.showMessageDialog(null,"Deleted Successfully...");
+				idTxt.setText("");
+				nicTxt.setText("");
+				nameTxt.setText("");
+				prfMarkTxt.setText("");
+				dbmsMarkTxt.setText("");
+			}
+		});
+		
+		cancelBtn.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				dispose();
+				StudentManagement s1=new StudentManagement(list);
+				s1.setVisible(true);
+			}
+		});
+	}
+}
+
+class StudentReport extends JFrame {
+    private JLabel titleLbl;
+    private JButton backBtn;
+    private DefaultTableModel dtm;
+    private JTable tblCustomerDetails;
+    private Node list;
+
+    StudentReport(Node listLocal) {
+        this.list = listLocal;
+        setSize(900, 600);
+        setTitle("View Student Report");
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+        setLayout(new BorderLayout());
+
+        titleLbl = new JLabel("View Student Report");
+        titleLbl.setFont(new Font("SansSerif", Font.BOLD, 35));
+        titleLbl.setHorizontalAlignment(JLabel.CENTER);
+        add(titleLbl, BorderLayout.NORTH);
+
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        backBtn = new JButton("Back");
+        backBtn.setFont(new Font("SansSerif", Font.BOLD, 18));
+        buttonPanel.add(backBtn);
+        add(buttonPanel, BorderLayout.SOUTH);
+
+        String[] columnsName = {"No", "Student ID", "Name", "NIC", "PRF Mark", "DBMS Mark", "GPA"};
+        dtm = new DefaultTableModel(columnsName, 0);
+
+        for (int i = 0; i < list.size(); i++) {
+            Node.Student student = list.getIndex(i);
+            double prf = student.getPRFMark();
+            double dbms = student.getDBMSMark();
+            double gpaValue = (list.searchGPA(prf) + list.searchGPA(dbms)) / 2;
+
+            String[] rowData = {
+                String.valueOf(i + 1),
+                student.getID(),
+                student.getName(),
+                student.getNIC(),
+                String.valueOf(prf),
+                String.valueOf(dbms),
+                String.format("%.2f", gpaValue)
+            };
+            dtm.addRow(rowData);
+        }
+
+        tblCustomerDetails = new JTable(dtm);
+        JScrollPane tablePane = new JScrollPane(tblCustomerDetails);
+        add(tablePane, BorderLayout.CENTER);
+
+        backBtn.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                dispose();
+                StudentManagementFirstPage s1 = new StudentManagementFirstPage(list);
+                s1.setVisible(true);
+            }
+        });
+    }
+}
 
 class Demo{
-	public static void main(String[] args){
+	public static void main(String[] args)throws IOException{
+		Node list=new Node();
 		
+		StudentManagementFirstPage s1=new StudentManagementFirstPage(list);
+		s1.setVisible(true);
+		
+		File studentFile=new File("Student.txt");
+		
+		Scanner input=new Scanner(studentFile);
+		while(input.hasNext()){
+			String line=input.nextLine();
+			String rowData[]=line.split(",");
+			String id=rowData[0];
+			String name=rowData[1];
+			String nic=rowData[2];
+			int prfMark=Integer.parseInt(rowData[3]);
+			int dbmsMark=Integer.parseInt(rowData[4]);
+			list.add(list.new Student(id,name,nic,prfMark,dbmsMark));
+			System.out.println(line);
+		}
 	}
 }
