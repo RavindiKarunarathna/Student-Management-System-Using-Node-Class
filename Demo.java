@@ -307,16 +307,23 @@ class StudentManagementFirstPage extends JFrame{
 		
 		mainTitleLbl=new JLabel("iCET Student Management System");
 		mainTitleLbl.setFont(new Font("",1,30));
+		mainTitleLbl.setOpaque(true); 
+		mainTitleLbl.setBackground(Color.GREEN);
 		mainTitleLbl.setHorizontalAlignment(JLabel.CENTER);
 		add("North", mainTitleLbl);
 		
 		jBtnArray=new JButton[3];
 		String[] ar={"Student Management", "Student Report", "Exit"};
 		listFirstPage=new JPanel(new GridLayout(3,1,4,4));
+		Color darkBlue = new Color(0, 0, 139);
 		for(int i=0;i<3;i++){
 			jBtnArray[i]=new JButton(ar[i]);
 			jBtnArray[i].setFont(new Font("",1,30));
-			jBtnArray[i].setForeground(Color.BLACK);
+			jBtnArray[i].setForeground(Color.WHITE);
+			jBtnArray[i].setBackground(darkBlue); 
+			jBtnArray[i].setOpaque(true); 
+			jBtnArray[i].setBorderPainted(false); 
+			jBtnArray[i].setPreferredSize(new Dimension(150, 40)); 
 			listFirstPage.add(jBtnArray[i]);
 		}
 		
@@ -366,16 +373,24 @@ class StudentManagement extends JFrame{
 		mainTitleLbl=new JLabel("Student Management");
 		mainTitleLbl.setHorizontalAlignment(JLabel.CENTER);
 		mainTitleLbl.setFont(new Font("",1,25));
+		mainTitleLbl.setOpaque(true); 
+		mainTitleLbl.setBackground(Color.GREEN);
 		add("North",mainTitleLbl);
 		
 		jBtnArray=new JButton[5];
 		String ar[]={"Add Student","Update Student","View Student","Delete Student","Back"};
 		mainBtnPanel=new JPanel(new GridLayout(5,1,4,4));
+		Color darkBlue = new Color(0, 0, 139);
 		
 		for(int i=0;i<ar.length;i++){
 			jBtnArray[i]=new JButton();
 			jBtnArray[i].setText(ar[i]);
 			jBtnArray[i].setFont(new Font("",1,20));
+			jBtnArray[i].setForeground(Color.WHITE);
+			jBtnArray[i].setBackground(darkBlue); 
+			jBtnArray[i].setOpaque(true); 
+			jBtnArray[i].setBorderPainted(false); 
+			jBtnArray[i].setPreferredSize(new Dimension(150, 40)); 
 			mainBtnPanel.add(jBtnArray[i]);
 			add("Center",mainBtnPanel);
 		}
@@ -440,6 +455,9 @@ class AddStudent extends JFrame {
         mainTitleLbl.setHorizontalAlignment(JLabel.CENTER);
         mainTitleLbl.setFont(new Font("SansSerif", Font.BOLD, 50));
         northColorPanel.add(mainTitleLbl, BorderLayout.CENTER);
+        mainTitleLbl.setOpaque(true); 
+		mainTitleLbl.setBackground(new Color(0, 0, 139)); 
+		mainTitleLbl.setForeground(Color.WHITE);       
         add(northColorPanel, BorderLayout.NORTH);
 
         txtNamePanel = new JPanel(new GridLayout(5, 2, 10, 10));
@@ -489,6 +507,12 @@ class AddStudent extends JFrame {
         cancelBtn = new JButton("Cancel");
         addStudentBtn.setFont(labelFont);
         cancelBtn.setFont(labelFont);
+
+		addStudentBtn.setBackground(Color.GREEN);
+		addStudentBtn.setForeground(Color.BLACK);
+
+		cancelBtn.setBackground(Color.GREEN);
+		cancelBtn.setForeground(Color.BLACK);
 
         btnPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 20, 10));
         btnPanel.add(cancelBtn);
@@ -592,6 +616,9 @@ class ViewStudent extends JFrame{
 		JLabel titleLbl=new JLabel("View Student");
 		titleLbl.setFont(new Font("",3,20));
 		titleLbl.setHorizontalAlignment(JLabel.CENTER);
+		titleLbl.setOpaque(true); 
+		titleLbl.setBackground(new Color(0, 0, 139)); 
+		titleLbl.setForeground(Color.WHITE); 
 		add("North",titleLbl);
 		
 		JPanel studentDetailPanel=new JPanel(new GridLayout(5,2,10,10));
@@ -638,6 +665,15 @@ class ViewStudent extends JFrame{
 		searchBtn=new JButton("Search");
 		resetBtn=new JButton("Reset");
 		cancelBtn=new JButton("Cancel");
+		
+		searchBtn.setBackground(Color.GREEN);
+		searchBtn.setForeground(Color.BLACK);
+		
+		resetBtn.setBackground(Color.GREEN);
+		resetBtn.setForeground(Color.BLACK);
+
+		cancelBtn.setBackground(Color.GREEN);
+		cancelBtn.setForeground(Color.BLACK);
 		
 		buttonPanel.add(cancelBtn);
 		buttonPanel.add(resetBtn);
@@ -700,6 +736,9 @@ class UpdateStudent extends JFrame{
 		JLabel titleLbl=new JLabel ("Update Student");
 		titleLbl.setFont(new Font("",3,20));
 		titleLbl.setHorizontalAlignment(JLabel.CENTER);
+		titleLbl.setOpaque(true); 
+		titleLbl.setBackground(new Color(0, 0, 139)); 
+		titleLbl.setForeground(Color.WHITE); 
 		add("North",titleLbl);
 		
 		JPanel bodyPanel=new JPanel(new GridLayout(5,2,10,10));
@@ -744,6 +783,15 @@ class UpdateStudent extends JFrame{
 		JPanel buttonPanel=new JPanel(new FlowLayout(FlowLayout.RIGHT));
 		updateStudentBtn=new JButton("Update Student");
 		cancelBtn=new JButton("Cancel");
+		
+		searchBtn.setBackground(Color.GREEN);
+		searchBtn.setForeground(Color.BLACK);
+		
+		updateStudentBtn.setBackground(Color.GREEN);
+		updateStudentBtn.setForeground(Color.BLACK);
+		
+		cancelBtn.setBackground(Color.GREEN);
+		cancelBtn.setForeground(Color.BLACK);
 		
 		buttonPanel.add(cancelBtn);
 		buttonPanel.add(updateStudentBtn);
@@ -839,6 +887,9 @@ class DeleteStudent extends JFrame{
 		JLabel titleLbl=new JLabel("Delete Student");
 		titleLbl.setFont(new Font("",3,20));
 		titleLbl.setHorizontalAlignment(JLabel.CENTER);
+		titleLbl.setOpaque(true); 
+		titleLbl.setBackground(new Color(0, 0, 139)); 
+		titleLbl.setForeground(Color.WHITE); 
 		add("North",titleLbl);
 		
 		JPanel bodyPanel=new JPanel(new GridLayout(5,2,10,10));
@@ -883,6 +934,15 @@ class DeleteStudent extends JFrame{
 		JPanel buttonPanel=new JPanel(new FlowLayout(FlowLayout.RIGHT));
 		deleteStudentBtn=new JButton("Delete Student");
 		cancelBtn=new JButton("Cancel");
+		
+		searchBtn.setBackground(Color.GREEN);
+		searchBtn.setForeground(Color.BLACK);
+		
+		deleteStudentBtn.setBackground(Color.GREEN);
+		deleteStudentBtn.setForeground(Color.BLACK);
+		
+		cancelBtn.setBackground(Color.GREEN);
+		cancelBtn.setForeground(Color.BLACK);
 		
 		buttonPanel.add(cancelBtn);
 		buttonPanel.add(deleteStudentBtn);
@@ -970,11 +1030,16 @@ class StudentReport extends JFrame {
         titleLbl = new JLabel("View Student Report");
         titleLbl.setFont(new Font("SansSerif", Font.BOLD, 35));
         titleLbl.setHorizontalAlignment(JLabel.CENTER);
+        titleLbl.setOpaque(true); 
+		titleLbl.setBackground(new Color(0, 0, 139)); 
+		titleLbl.setForeground(Color.WHITE); 
         add(titleLbl, BorderLayout.NORTH);
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         backBtn = new JButton("Back");
         backBtn.setFont(new Font("SansSerif", Font.BOLD, 18));
+        backBtn.setBackground(Color.GREEN);
+		backBtn.setForeground(Color.BLACK);
         buttonPanel.add(backBtn);
         add(buttonPanel, BorderLayout.SOUTH);
 
